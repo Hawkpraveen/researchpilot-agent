@@ -69,7 +69,8 @@ def create_app() -> FastAPI:
                     "message": "The research agent could not complete the request.",
                     "retryable": True,
                     "requestId": request_id,
-                }
+                },
+                "usage": getattr(error, "usage", None),
             },
         )
 

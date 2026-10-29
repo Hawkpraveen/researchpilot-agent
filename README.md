@@ -16,6 +16,15 @@ Search requests, result slots, model output, and total time are bounded by depth
 Criteria without evidence remain explicitly unknown. This is first-pass research;
 automated follow-up searches and independent factual verification are not implemented.
 
+## Usage accounting
+
+Request-local accounting captures each provider call before output validation.
+Ollama evaluation counts, OpenAI-compatible usage, Anthropic input/output and
+cache counters, and Tavily `usage.credits` are returned in the top-level `usage`
+envelope on success and failure. Tavily requests set `include_usage: true`.
+The Node API persists usage per execution, independently of whether a report
+is published. Requests without returned usage remain unknown, not zero.
+
 ## Local development
 
 Requires Python 3.11 or later.

@@ -1,4 +1,5 @@
 from typing import Literal
+from uuid import uuid4
 from urllib.parse import urlsplit
 
 from pydantic import Field, SecretStr, field_validator, model_validator
@@ -29,7 +30,9 @@ class ProviderConfig(StrictModel):
 
 
 class ExecuteResearchRequest(CreateResearchPlanRequest):
+    executionId: str = Field(default_factory=lambda: str(uuid4()), min_length=1, max_length=80)
     provider: ProviderConfig
+    resume: "ResumeDiscovery | None" = None
 
 
 class Evidence(StrictModel):
@@ -55,6 +58,20 @@ class ResearchDraft(StrictModel):
     uncertainties: list[str] = Field(default_factory=list, max_length=30)
 
 
+class SubjectCandidate(StrictModel):
+    label: str = Field(min_length=1, max_length=150)
+    description: str = Field(min_length=1, max_length=500)
+    sourceIds: list[str] = Field(min_length=1, max_length=8)
+
+
+class SubjectResolution(StrictModel):
+    status: Literal["resolved", "ambiguous", "unresolved"]
+    subject: str = Field(max_length=300)
+    explanation: str = Field(min_length=1, max_length=1000)
+    candidates: list[SubjectCandidate] = Field(max_length=4)
+    selectedSourceIds: list[str] = Field(max_length=8)
+
+
 class ResearchSource(StrictModel):
     id: str
     title: str
@@ -70,8 +87,16 @@ class ComparisonRow(StrictModel):
     values: dict[str, str]
 
 
+class ResumeDiscovery(StrictModel):
+    subject: str = Field(default="", max_length=150)
+    context: str = Field(default="", max_length=500)
+    consumedPages: int = Field(ge=0, le=30)
+    sources: list[ResearchSource] = Field(min_length=1, max_length=30)
+
+
 class ResearchReport(StrictModel):
-    researchStatus: Literal["completed"] = "completed"
+    researchStatus: Literal["completed", "partial", "needs_clarification"] = "completed"
+    resolution: SubjectResolution | None = None
     summary: str
     recommendation: str
     alternatives: list[str]
@@ -81,7 +106,11 @@ class ResearchReport(StrictModel):
 
 
 class ExecuteResearchResponse(StrictModel):
+    usage: dict | None = None
     jobId: str
     contractVersion: Literal["1.0"] = "1.0"
     researchExecuted: Literal[True] = True
     report: ResearchReport
+
+
+ExecuteResearchRequest.model_rebuild()
