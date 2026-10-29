@@ -10,6 +10,7 @@ class Settings:
     host: str
     port: int
     log_level: str
+    tavily_api_key: str = ""
 
 
 @lru_cache
@@ -29,4 +30,4 @@ def get_settings() -> Settings:
     if log_level not in {"CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"}:
         raise ValueError("LOG_LEVEL must be a supported Python logging level.")
 
-    return Settings(host=host, port=port, log_level=log_level)
+    return Settings(host=host, port=port, log_level=log_level, tavily_api_key=os.getenv("TAVILY_API_KEY", "").strip())

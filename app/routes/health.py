@@ -12,5 +12,5 @@ async def health() -> dict[str, str | list[str]]:
         "service": "researchpilot-agent",
         "status": "ok",
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "capabilities": ["bounded_research_planning"],
+        "capabilities": ["bounded_research_planning", "web_research_execution"],
     }
