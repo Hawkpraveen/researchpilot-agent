@@ -1,5 +1,9 @@
 # ResearchPilot Agent
 
+To connect the hosted app to Ollama on your computer through an authenticated
+gateway, see [Local Ollama connection](LOCAL-OLLAMA.md). This optional gateway
+runs locally and does not change the private agent deployed on Render.
+
 Private Python service boundary for the bounded ResearchPilot research
 workflow. This repository is separate from the public Node API and does not
 write to the product database. The web client must never call this service;

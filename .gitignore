@@ -10,3 +10,4 @@ __pycache__/
 !.env.example
 *.py[cod]
 *.log
+.local-tools/
