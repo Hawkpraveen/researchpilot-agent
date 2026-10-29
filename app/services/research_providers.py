@@ -101,7 +101,7 @@ async def generate_json(client: httpx.AsyncClient, provider: ProviderConfig, pro
             "model": provider.model, "messages": messages, "stream": False,
             "format": schema,
             "options": {"num_ctx": 4096 if max_tokens <= 900 else 8192, "num_predict": max_tokens, "temperature": 0},
-        }, {}, "MODEL", provider.provider, stage)
+        }, {"Authorization": f"Bearer {key}"} if key else {}, "MODEL", provider.provider, stage)
         content = body.get("message", {}).get("content", "")
     elif provider.provider == "anthropic":
         base = base if base.endswith("/v1") else f"{base}/v1"
